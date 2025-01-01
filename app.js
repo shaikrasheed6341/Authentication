@@ -17,7 +17,7 @@ app.use("/api/v1/user",router)
 
 
 const start = async()=>{
-    const url = "mongodb+srv://shaikrasheed6341:aU7mE2FoWemoE8ru@cluster0.rqhas.mongodb.net/"
+    const url = "entre your data base link"
      await mongoose.connect(url)
     .then(console.log(`data base is sucessfully connected `))
 
