@@ -1,6 +1,36 @@
+import { useState } from 'react'
 import logo from '../assets/logo.jpg'
+import axios from 'axios'
+
 export default function Signup() {
+    const [firastname ,setfirstname] = useState('');
+    const [lastname ,setlastname]=useState('');
+    const[username,setusername] =useState('');
+    const[password,setpassword]= useState('');
+   const[Signup,setSignup] = useState(false);
+    const handlesubmit = (e) => {
+        e.preventDefault();
+      d
+       
+        axios
+          .post("http://localhost:8000/api/user/registration", {
+            firastname,
+            lastname,
+            username,
+            password,
+          })
+          .then((result) => {
+            console.log(result);
+          })
+          .catch((e) => {
+            console.log(e.response ? e.response.data : e.message); 
+          });
+      };
+      
+
+    
     return (
+        
         <div>
 
 
@@ -12,7 +42,7 @@ export default function Signup() {
                             <img
                                 alt=""
                                 src={logo}
-                                className=" absolute inset-0 lg:top-28  lg:h-1/2  w-full object-contain md:absolute inset-0 h-full w-full object-contain opacity-80 "
+                                className=" absolute inset-0 lg:top-28  lg:h-64  w-full object-contain md:absolute inset-0 h-full w-full object-contain opacity-80 "
                             />
                         
 
@@ -55,7 +85,7 @@ export default function Signup() {
                             </div>
                             
                                  <p className='lg:text-3xl text-indgio-900  font-mono '>Signup </p>
-                            <form action="#" className="mt-8 grid grid-cols-6 gap-6 ">
+                            <form  onSubmit={handlesubmit}     action="/sucess" className="mt-8 grid grid-cols-6 gap-6   ">
                                 
                                 <div className="col-span-6 sm:col-span-3">
                                     <label htmlFor="FirstName" className="block text-sm font-medium text-gray-700">
@@ -63,10 +93,11 @@ export default function Signup() {
                                     </label>
 
                                     <input
-                                        p
+                                        
                                         type="text"
-                                        id="FirstName"
-                                        name="first_name"
+                                        id="firstName"
+                                        name="firstname"
+                                        onChange={(e)=> setfirstname(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
                                     />
                                 </div>
@@ -78,20 +109,22 @@ export default function Signup() {
 
                                     <input
                                         type="text"
-                                        id="LastName"
-                                        name="last_name"
+                                        id="lastName"
+                                        name="lastname"
+                                        onChange={(e)=> setlastname(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
                                     />
                                 </div>
 
                                 <div className="col-span-6">
-                                    <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Email </label>
+                                    <label htmlFor="username" className="block text-sm font-medium text-gray-700"> Email </label>
 
                                     <input
-                                        type="email"
-                                        id="Email"
-                                        name="email"
+                                        type="username"
+                                        id="username"
+                                        name="username"
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
+                                        onChange={(e)=> setusername(e.target.value)}
                                     />
                                 </div>
 
@@ -103,6 +136,7 @@ export default function Signup() {
                                         id="Password"
                                         name="password"
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
+                                        onChange={(e)=>setpassword(e.target.value)}
                                     />
                                 </div>
 
@@ -132,7 +166,7 @@ export default function Signup() {
                                 </div>
 
                                 <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                                    <button
+                                    <button  
                                         className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
                                     >
                                         Create an account
@@ -140,7 +174,7 @@ export default function Signup() {
 
                                     <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                                         Already have an account?
-                                        <a href="#" className="text-gray-700 underline">Log in</a>.
+                                        <a href="/login" className="text-gray-700 underline">Log in</a>.
                                     </p>
                                 </div>
                             </form>

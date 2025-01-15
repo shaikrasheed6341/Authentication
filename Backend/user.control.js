@@ -1,6 +1,6 @@
 import bcrypt,{hash}from "bcrypt";
 import crypto from "crypto";
-import { User } from "../model/user.model.js";
+import { User } from "./src/model/user.model.js";
 
 
 const registration = async (req, res) => {
