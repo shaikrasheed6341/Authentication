@@ -1,55 +1,123 @@
-import { useState } from 'react'
-import logo from '../assets/logo.jpg'
-import axios from 'axios'
+import { useState } from 'react';
+import logo from '../assets/logo.jpg';
+import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
+
+import { ToastContainer, toast } from 'react-toastify'
 
 export default function Signup() {
-    const [firastname ,setfirstname] = useState('');
-    const [lastname ,setlastname]=useState('');
-    const[username,setusername] =useState('');
-    const[password,setpassword]= useState('');
-   const[Signup,setSignup] = useState(false);
-    const handlesubmit = (e) => {
+    const navigate = useNavigate();
+   
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(null);
+
+    const [firstname, setFirstname] = useState('');  // Fixed typo here
+    const [lastname, setLastname] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = async (e) => {  // Fixed typo in function name
         e.preventDefault();
-      d
-       
-        axios
-          .post("http://localhost:8000/api/user/registration", {
-            firastname,
-            lastname,
-            username,
-            password,
-          })
-          .then((result) => {
-            console.log(result);
-          })
-          .catch((e) => {
-            console.log(e.response ? e.response.data : e.message); 
-          });
-      };
-      
+        setLoading(true);
+        try {
+            const response = await axios.post('http://localhost:8000/api/user/registration', {
+                username,
+                password,
+                firstname,
+                lastname,  // Added missing state
+            });
+            setData(response.data);
+            toast.success('account is sucessfully created', {
+                position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            })
+            setTimeout(() => {
+                navigate('/login');
+            }, 1200);
 
-    
+        } catch (err) {
+            console.log(err);
+            const errormessage = ` ${err.response.status}  ${err.response.data.message.slice(0, 40)}`
+            if (err.response) {
+                toast.error(errormessage,{
+                    position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                })
+            
+                
+                
+
+            } else if (err.request) {
+                setError('No response received from the server');
+                toast.error('No response received from the server',{
+                    position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                })
+                
+            } else {
+                setError(`Request Error: ${err.message}`);
+                toast.error(`Request Error: ${err.message}`,{
+                    position: "top-center",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                })
+            }
+          
+        } 
+        finally {
+            setLoading(false);
+        }
+
+    };
+
     return (
-        
         <div>
-
+            <ToastContainer />
+            {/* //this logic want to understand
+            {loading && <div>Loading...</div>}
+            {error && <div>{error}</div>}
+            {data && (
+                <div>
+                    <h2>Response:</h2>
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                </div>
+            )} */}
 
             <section className="bg-white">
-                <div className="lg:grid lg:min-h-screen  lg:grid-cols-12">
-
-                    <section className="relative flex border-x-4 border-slate-300 h-32 items-end bg-white   lg:col-span-5  lg:h-full   xl:col-span-6">
-                
-                            <img
-                                alt=""
-                                src={logo}
-                                className=" absolute inset-0 lg:top-28  lg:h-64  w-full object-contain md:absolute inset-0 h-full w-full object-contain opacity-80 "
-                            />
-                        
-
+                <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
+                    <section className="relative flex border-x-4 border-slate-300 h-32 items-end bg-white lg:col-span-5 lg:h-full xl:col-span-6">
+                        <img
+                            alt=""
+                            src={logo}
+                            className="absolute inset-0 lg:top-28 lg:h-64 w-full object-contain md:absolute inset-0 h-full w-full object-contain opacity-80"
+                        />
                         <div className="hidden lg:relative lg:block lg:p-12">
                             <a className="block text-white" href="#">
                                 <span className="sr-only">Home</span>
-
                             </a>
 
                             <h2 className="mt-6 text-2xl font-bold text-indigo-950 sm:text-3xl md:text-4xl">
@@ -62,9 +130,7 @@ export default function Signup() {
                         </div>
                     </section>
 
-                    <main
-                        className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6"
-                    >
+                    <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
                         <div className="max-w-xl lg:max-w-3xl">
                             <div className="relative -mt-16 block lg:hidden">
                                 <a
@@ -72,32 +138,29 @@ export default function Signup() {
                                     href="#"
                                 >
                                     <span className="sr-only">Home</span>
-                                  
                                 </a>
 
                                 <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
-                                Welcome to Authcation Libery 🔒
+                                    Welcome to Authcation Libery 🔒
                                 </h1>
 
                                 <p className="mt-4 leading-relaxed text-black-500">
-                                Effortlessly integrate secure authentication into any project with our ready-to-use library. Designed for simplicity, just copy, paste, and deploy
+                                    Effortlessly integrate secure authentication into any project with our ready-to-use library. Designed for simplicity, just copy, paste, and deploy
                                 </p>
                             </div>
-                            
-                                 <p className='lg:text-3xl text-indgio-900  font-mono '>Signup </p>
-                            <form  onSubmit={handlesubmit}     action="/sucess" className="mt-8 grid grid-cols-6 gap-6   ">
-                                
+
+                            <p className="lg:text-3xl text-indigo-900 font-mono">Signup</p>
+                            <form onSubmit={handleSubmit} href="/login" className="mt-8 grid grid-cols-6 gap-6">
                                 <div className="col-span-6 sm:col-span-3">
                                     <label htmlFor="FirstName" className="block text-sm font-medium text-gray-700">
                                         First Name
                                     </label>
-
                                     <input
-                                        
                                         type="text"
                                         id="firstName"
                                         name="firstname"
-                                        onChange={(e)=> setfirstname(e.target.value)}
+
+                                        onChange={(e) => setFirstname(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
                                     />
                                 </div>
@@ -106,40 +169,39 @@ export default function Signup() {
                                     <label htmlFor="LastName" className="block text-sm font-medium text-gray-700">
                                         Last Name
                                     </label>
-
                                     <input
                                         type="text"
                                         id="lastName"
                                         name="lastname"
-                                        onChange={(e)=> setlastname(e.target.value)}
+
+                                        onChange={(e) => setLastname(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
                                     />
                                 </div>
 
                                 <div className="col-span-6">
                                     <label htmlFor="username" className="block text-sm font-medium text-gray-700"> Email </label>
-
                                     <input
-                                        type="username"
+                                        type="text"  // changed from 'username' to 'text'
                                         id="username"
                                         name="username"
+
+                                        onChange={(e) => setUsername(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
-                                        onChange={(e)=> setusername(e.target.value)}
                                     />
                                 </div>
 
                                 <div className="col-span-6 sm:col-span-6">
                                     <label htmlFor="Password" className="block text-sm font-medium text-gray-700"> Password </label>
-
                                     <input
                                         type="password"
-                                        id="Password"
+                                        id="password"
+
                                         name="password"
+                                        onChange={(e) => setPassword(e.target.value)}
                                         className="mt-1 w-full p-2 rounded-md border-gray-900 bg-slate-100 text-sm text-gray-700 shadow-sm"
-                                        onChange={(e)=>setpassword(e.target.value)}
                                     />
                                 </div>
-
 
                                 <div className="col-span-6">
                                     <label htmlFor="MarketingAccept" className="flex gap-4">
@@ -149,9 +211,8 @@ export default function Signup() {
                                             name="marketing_accept"
                                             className="size-5 rounded-md border-gray-200 bg-white shadow-sm"
                                         />
-
                                         <span className="text-sm text-gray-700">
-                                            I want to receive emails about events, product updates and company announcements.
+                                            I want to receive emails about events, product updates, and company announcements.
                                         </span>
                                     </label>
                                 </div>
@@ -161,12 +222,15 @@ export default function Signup() {
                                         By creating an account, you agree to our
                                         <a href="#" className="text-gray-700 underline"> terms and conditions </a>
                                         and
-                                        <a href="#" className="text-gray-700 underline">privacy policy</a>.
+                                        <a href="#" className="text-gray-700 underline"> privacy policy</a>.
                                     </p>
                                 </div>
 
                                 <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                                    <button  
+
+                                    <button 
+
+                                        type="submit"
                                         className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
                                     >
                                         Create an account
@@ -183,5 +247,5 @@ export default function Signup() {
                 </div>
             </section>
         </div>
-    )
+    );
 }
